@@ -52,7 +52,7 @@ Create one or more S3 bucket(s) and configure. Make sure your solution meets the
 
 ### Solution Overview
 
-To meet the business requirements, I created a **single S3 bucket** with two distinct prefixes to separate the backup data from user profile pictures. This approach provides a consistent destination URL while allowing different lifecycle policies for each data type.
+To meet the business requirements, I created a single S3 bucket with two distinct prefixes to separate the backup data from user profile pictures. This approach provides a consistent destination URL while allowing different lifecycle policies for each data type.
 
 **Bucket Structure:**
 - `backups/` — Stores backup data with tiered lifecycle transitions
@@ -74,7 +74,7 @@ The backup lifecycle policy transitions objects through increasingly cost-effect
 
 | Storage Class | Justification |
 |---------------|---------------|
-| S3 One Zone-IA | **Cost-optimized choice** for non-critical, frequently accessed data. Since users can re-upload images if lost, the reduced durability of single-AZ storage is acceptable. Provides ~20% cost savings compared to Standard-IA while still offering millisecond retrieval for the frequent profile loads. |
+| S3 One Zone-IA | Cost-optimized choice for non-critical, frequently accessed data. Since users can re-upload images if lost, the reduced durability of single-AZ storage is acceptable. Provides ~20% cost savings compared to Standard-IA while still offering millisecond retrieval for the frequent profile loads. |
 
 **Note:** No lifecycle transitions or expiration rules are configured for profile pictures since they need to remain available as long as the user account is active.
 
@@ -123,8 +123,8 @@ Include screenshots and documentation of:
 
 Upon reviewing the existing infrastructure, I found:
 
-- **EC2 instances** running 24/7 to host the company website
-- Website content appears to be **static** (HTML, CSS, JavaScript, images)
+- EC2 instances running 24/7 to host the company website
+- Website content appears to be static (HTML, CSS, JavaScript, images)
 - Traffic patterns show activity primarily during business hours with minimal overnight/weekend usage
 - EC2 instances incur costs regardless of traffic volume (compute, storage, potentially Elastic IP)
 
@@ -645,160 +645,3 @@ If operational simplicity and reliability are priorities, NAT Gateway remains th
 
 *(AWS Pricing Calculator screenshots and PDF export to be added)*
 
-# Task 6
-## Scenario
-You are an AWS Architect for a software company building a new application. During development, the application backend uses DynamoDB. A CloudWatch screenshot shows a graph of read and write activity to the table qa-table-1.
-
-You, the AWS Architect, are required to make recommendations and changes to optimize the cost.
-
-Business Requirements:
-
-- Application is in development phase, and can tolerate latency.
-- Company wants to minimize DynamoDB costs while still allowing development to continue.
-- Expected traffic is unpredictable and sporadic, with peaks and idle periods
-- Solution should allow for the minimum I/O required as per current usage.
-
-## Instructions
-- Document the current finding
-- Document what changes you plan to make
-- Screen shots of the changes made
-
-## Rubric: Not available
-
-## Submission
-### Current Findings
-
-Upon reviewing the CloudWatch metrics for `qa-table-1`, I observed:
-
-#### Read/Write Activity Patterns
-- **Traffic pattern:** Unpredictable and sporadic with peaks and idle periods
-- **Usage characteristic:** Typical development workload with bursts during active testing and long idle periods
-- **Current capacity mode:** *(To be documented from console — likely Provisioned Capacity)*
-
-#### Potential Issues with Provisioned Capacity Mode
-
-If the table is using **Provisioned Capacity Mode**, the following cost issues arise:
-
-| Issue | Impact |
-|-------|--------|
-| Paying for unused capacity during idle periods | Wasted cost when developers aren't actively testing |
-| Risk of throttling during unexpected peaks | Provisioned RCUs/WCUs may be insufficient for burst traffic |
-| Manual capacity management required | Operational overhead to adjust capacity based on usage |
-
----
-
-### Recommended Changes
-
-#### 1. Switch to On-Demand Capacity Mode
-
-**Recommendation:** Change `qa-table-1` from Provisioned Capacity to **On-Demand Capacity Mode**
-
-| Feature | Provisioned | On-Demand |
-|---------|-------------|-----------|
-| Billing model | Pay for provisioned RCU/WCU regardless of usage | Pay only for actual read/write requests |
-| Idle cost | Full cost even with zero traffic | $0 during idle periods |
-| Scaling | Manual or auto-scaling with delays | Instant, automatic scaling |
-| Traffic pattern fit | Predictable, steady workloads | Unpredictable, sporadic workloads ✓ |
-
-**Why On-Demand is ideal for this use case:**
-- **Development phase** — Traffic is inherently unpredictable
-- **Sporadic usage** — No cost during idle periods (nights, weekends, between tests)
-- **Automatic scaling** — Handles unexpected peaks without throttling
-- **No capacity planning** — Eliminates guesswork and manual adjustments
-
-#### 2. Consider DynamoDB Standard-IA Table Class (Optional)
-
-If the data in `qa-table-1` is infrequently accessed (read-heavy with occasional writes), consider switching to **DynamoDB Standard-IA (Infrequent Access)** table class:
-
-| Table Class | Storage Cost | Read/Write Cost |
-|-------------|--------------|-----------------|
-| Standard | Higher | Lower |
-| Standard-IA | ~60% lower | ~25% higher |
-
-**Use Standard-IA if:**
-- Storage costs exceed read/write costs
-- Data is accessed infrequently
-- Table stores large amounts of rarely-queried data
-
-**For most development tables, Standard class with On-Demand is sufficient.**
-
-#### 3. Enable TTL for Test Data (Optional)
-
-If the table accumulates test data that doesn't need long-term retention:
-
-- **Enable Time to Live (TTL)** on a timestamp attribute
-- Automatically delete old test records
-- Reduces storage costs over time
-- No additional charges for TTL deletions
-
----
-
-### Implementation Steps
-
-#### Step 1: Review Current Table Configuration
-1. Navigate to **DynamoDB Console** → Tables → `qa-table-1`
-2. Document current capacity mode, RCU/WCU settings, and table class
-3. Review CloudWatch metrics for actual usage patterns
-
-#### Step 2: Switch to On-Demand Capacity Mode
-1. Select `qa-table-1` in DynamoDB Console
-2. Click **Additional settings** tab
-3. Click **Edit** in the Read/write capacity settings section
-4. Select **On-demand** capacity mode
-5. Click **Save changes**
-
-*Note: You can switch between capacity modes once every 24 hours.*
-
-#### Step 3: Verify Configuration
-1. Confirm capacity mode shows "On-demand"
-2. Monitor CloudWatch metrics to ensure requests are being served
-3. Review billing after a few days to confirm cost reduction
-
----
-
-### Cost Comparison
-
-#### Example Scenario: Low-Usage Development Table
-
-| Metric | Provisioned Mode | On-Demand Mode |
-|--------|------------------|----------------|
-| Provisioned WCU | 5 WCU | — |
-| Provisioned RCU | 5 RCU | — |
-| Actual usage | ~1,000 writes, ~5,000 reads/month | ~1,000 writes, ~5,000 reads/month |
-| Monthly cost | ~$2.50 (fixed, regardless of usage) | ~$0.01 (pay-per-request) |
-
-*On-Demand pricing (us-east-1): $1.25 per million write requests, $0.25 per million read requests*
-
-#### With Sporadic Usage Pattern
-
-| Period | Provisioned Cost | On-Demand Cost |
-|--------|------------------|----------------|
-| Active development (8 hrs/day) | Full cost | Pay for actual requests |
-| Idle periods (nights/weekends) | Full cost | $0 |
-| **Monthly savings** | — | **Up to 80-90%** |
-
----
-
-### How This Meets Business Requirements
-
-| Requirement | How It's Met |
-|-------------|--------------|
-| Application can tolerate latency | On-Demand mode has no latency concerns; provides consistent performance |
-| Minimize DynamoDB costs | Pay-per-request eliminates cost during idle periods |
-| Unpredictable, sporadic traffic | On-Demand automatically scales to handle any traffic pattern |
-| Minimum I/O as per current usage | Only charged for actual read/write requests made |
-
----
-
-### Summary
-
-The primary recommendation is to **switch from Provisioned Capacity to On-Demand Capacity Mode**. This change:
-
-1. **Eliminates idle costs** — No charges during nights, weekends, or inactive development periods
-2. **Handles sporadic traffic** — Automatic scaling for unpredictable usage patterns
-3. **Removes operational overhead** — No need to monitor and adjust capacity settings
-4. **Aligns cost with value** — Pay only for actual development activity
-
-### Screenshots
-
-*(Screenshots of current DynamoDB table configuration, capacity mode change, and CloudWatch metrics to be added)*

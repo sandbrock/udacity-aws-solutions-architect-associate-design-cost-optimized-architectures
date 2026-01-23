@@ -1,0 +1,67 @@
+# ==============================================
+# Task 5: NAT Gateway vs NAT Instance Comparison
+# ==============================================
+#
+# This example file demonstrates how to configure the VPC infrastructure
+# for comparing NAT Gateway and NAT Instance solutions.
+#
+# USAGE:
+# 1. Copy this file: cp terraform.tfvars.example terraform.tfvars
+# 2. Edit terraform.tfvars with your desired configuration
+# 3. Run: tofu init && tofu plan && tofu apply
+#
+# ==============================================
+
+# Project Configuration
+# project_name = "task5-nat-comparison"
+# environment  = "development"
+
+# VPC and Network Configuration
+# vpc_cidr             = "10.0.0.0/16"
+# availability_zones   = ["us-east-1a", "us-east-1b"]
+# public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+# private_subnet_cidrs = ["10.0.101.0/24", "10.0.102.0/24"]
+
+# ==============================================
+# NAT Solution Configuration
+# ==============================================
+
+# Option 1: NAT Gateway Solution (Managed, High Availability)
+# Cost: ~$110.70/month for 2 NAT Gateways + 1TB data processing
+# enable_nat_gateway = true
+# enable_nat_instance = false
+
+# Option 2: NAT Instance Solution (Self-Managed, Cost-Optimized)
+# Cost: ~$8.87/month for 2 t3.nano instances (24/7)
+# enable_nat_gateway  = false
+# enable_nat_instance = true
+# nat_instance_type   = "t3.nano"
+
+# Option 3: Side-by-Side Comparison (Both Solutions)
+# Cost: ~$119.57/month (combined)
+# Use this to compare actual AWS costs in Cost Explorer
+# enable_nat_gateway  = true
+# enable_nat_instance = true
+# nat_instance_type   = "t3.nano"
+
+# Option 4: VPC Only (No NAT Solution)
+# Cost: Minimal (VPC, subnets, IGW only)
+# enable_nat_gateway  = false
+# enable_nat_instance = false
+
+# ==============================================
+# Monitoring Configuration
+# ==============================================
+
+# Enable CloudWatch alarms for NAT Instance health monitoring
+# enable_cloudwatch_alarms = true
+
+# ==============================================
+# Cost Allocation Tags
+# ==============================================
+
+# common_tags = {
+#   CostCenter = "Engineering"
+#   Owner      = "DevOps-Team"
+#   Purpose    = "NAT-Solution-Comparison"
+# }

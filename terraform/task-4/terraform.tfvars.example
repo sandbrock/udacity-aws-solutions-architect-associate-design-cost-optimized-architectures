@@ -1,0 +1,62 @@
+# AWS Region
+aws_region = "us-east-1"
+
+# Cost Allocation Tags
+environment = "QA"
+team        = "Engineering"
+project     = "qa-instance-1"
+
+# EC2 Instance Configuration
+instance_type = "t3.medium"
+instance_name = "qa-instance-1"
+
+# Network Configuration (REQUIRED - Update with your VPC and Subnet IDs)
+vpc_id    = "vpc-xxxxxxxxxxxxxxxxx"
+subnet_id = "subnet-xxxxxxxxxxxxxxxxx"
+
+# SSH Access Configuration (REQUIRED - Update with your key pair name)
+key_pair_name = "your-key-pair-name"
+
+# SSH Access Control (Update with your IP address for security)
+ssh_cidr_blocks = ["0.0.0.0/0"] # WARNING: Replace with your specific IP/CIDR for security
+
+# HTTP/HTTPS Access (Optional - Uncomment if needed)
+# enable_http_access  = true
+# http_cidr_blocks    = ["0.0.0.0/0"]
+# enable_https_access = true
+# https_cidr_blocks   = ["0.0.0.0/0"]
+
+# Custom Security Group Rules (Optional - Add as needed)
+# custom_ingress_rules = [
+#   {
+#     from_port   = 8080
+#     to_port     = 8080
+#     protocol    = "tcp"
+#     cidr_blocks = ["10.0.0.0/8"]
+#     description = "Application port access from private network"
+#   }
+# ]
+
+# EBS Volume Configuration
+root_volume_type = "gp3"
+root_volume_size = 20
+enable_ebs_encryption = true
+
+# IAM Configuration (Optional - Uncomment for SSM Session Manager access)
+# iam_instance_profile_name = "SSMInstanceProfile"
+
+# Monitoring Configuration (Optional - Detailed monitoring adds cost)
+# enable_detailed_monitoring = false
+
+# Custom AMI (Optional - Leave empty to use latest Amazon Linux 2023)
+# custom_ami_id = "ami-xxxxxxxxxxxxxxxxx"
+
+# User Data Script (Optional - Uncomment and modify for instance initialization)
+# user_data_script = <<-EOF
+#   #!/bin/bash
+#   yum update -y
+#   yum install -y httpd
+#   systemctl start httpd
+#   systemctl enable httpd
+#   echo "<h1>QA Instance - Cost Optimized</h1>" > /var/www/html/index.html
+# EOF

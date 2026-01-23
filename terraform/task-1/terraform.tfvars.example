@@ -1,0 +1,17 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and update with your values
+
+# AWS Region
+aws_region = "us-east-1"
+
+# S3 Bucket Name (must be globally unique)
+bucket_name = "my-company-centralized-storage"
+
+# Environment
+environment = "prod"
+
+# Optional: Enable S3 access logging
+enable_logging = false
+
+# Optional: Log retention period (days)
+log_retention_days = 90

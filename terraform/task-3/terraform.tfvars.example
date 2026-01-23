@@ -1,0 +1,29 @@
+# Task 3: AWS Budget with Cost Alerts - Example Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# AWS Region for resources
+aws_region = "us-east-1"
+
+# Budget Configuration
+budget_name  = "AdSpark-Monthly-Budget"
+budget_limit = 1000  # Monthly budget in USD
+
+# Email addresses for 50% threshold alerts (early warning)
+alert_emails_50pct = [
+  "finance-alerts@adspark.com"
+]
+
+# Email addresses for 80% threshold alerts (urgent action required)
+alert_emails_80pct = [
+  "finance-alerts@adspark.com",
+  "ops-team@adspark.com"
+]
+
+# Common tags for all resources
+tags = {
+  Environment = "Production"
+  Team        = "Finance"
+  Project     = "CostControl"
+  CostCenter  = "CC-1000"
+  ManagedBy   = "Terraform"
+}

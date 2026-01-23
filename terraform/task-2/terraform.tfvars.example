@@ -1,0 +1,30 @@
+# AWS Configuration
+aws_region = "us-east-1"
+
+# S3 Bucket Configuration (REQUIRED)
+# Note: Bucket name must be globally unique across all AWS accounts
+bucket_name = "nexlify-static-website-example"
+
+# Environment tag
+environment = "prod"
+
+# CloudFront Configuration
+# Cost optimization: PriceClass_100 (North America + Europe) is most cost-effective
+# Other options: PriceClass_200 (adds Asia, South America), PriceClass_All (all edge locations)
+price_class = "PriceClass_100"
+
+# Optional: Custom Domain Configuration
+# Uncomment and configure these if you want to use a custom domain
+# domain_name          = "example.com"
+# acm_certificate_arn  = "arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-5678-90ef-ghij-klmnopqrstuv"
+
+# Optional: Route 53 DNS Configuration
+# Uncomment these to automatically create DNS records in Route 53
+# create_dns_records = true
+# hosted_zone_id     = "Z1234567890ABC"
+
+# Optional: CloudFront Access Logging
+# Uncomment these to enable logging (requires an existing S3 bucket with logging permissions)
+# enable_logging  = true
+# logging_bucket  = "nexlify-cloudfront-logs"
+# logging_prefix  = "cloudfront-logs/"
