@@ -1,5 +1,7 @@
 # Task 1: S3 Bucket with Lifecycle Policies
 
+<!-- markdownlint-disable MD022 MD032 MD034 MD060 -->
+
 ## Overview
 
 This Terraform configuration creates an S3 bucket with cost-optimized lifecycle policies for two different use cases:
@@ -25,10 +27,12 @@ This Terraform configuration creates an S3 bucket with cost-optimized lifecycle 
 
 ### Profile Pictures Storage (`profile-pictures/` prefix)
 
-- **Storage Class**: S3 One Zone-IA
+- **Storage Class**: S3 One Zone-IA (set at upload time)
 - **Rationale**: Non-critical, frequently accessed data. Users can re-upload if lost.
 - **Cost Savings**: ~20% cheaper than Standard-IA while maintaining millisecond access
 - **No expiration**: Pictures remain as long as user account is active
+
+**Important:** Terraform cannot enforce a default storage class for a prefix. To achieve One Zone-IA immediately, the application (or CLI/SDK) must set the object storage class on upload (e.g., `x-amz-storage-class: ONEZONE_IA`).
 
 ## Security Configuration
 
@@ -134,32 +138,31 @@ aws s3 cp user-123-avatar.jpg s3://your-bucket-name/profile-pictures/user-123/av
 The bucket provides a consistent destination URL for API calls:
 
 ```python
-# Example Python boto3 usage
 import boto3
 
-s3_client = boto3.client('s3')
-bucket_name = 'your-bucket-name'
+s3_client = boto3.client("s3")
+bucket_name = "your-bucket-name"
 
-# Upload backup
+# Upload backup data under backups/
 s3_client.upload_file(
-    'local-backup.tar.gz',
-    bucket_name,
-    'backups/2026-01-22/ with One Zone-IA storage class
+  "local-backup.tar.gz",
+  bucket_name,
+  "backups/2026-01-22/local-backup.tar.gz",
+)
+
+# Upload profile picture under profile-pictures/ with One Zone-IA
 s3_client.upload_file(
-    'avatar.jpg',
-    bucket_name,
-    'profile-pictures/user-123/avatar.jpg',
-    ExtraArgs={'StorageClass': 'ONEZONE_IA'}
-    'avatar.jpg',
-    bucket_name,
-    'profile-pictures/user-123/avatar.jpg'
+  "avatar.jpg",
+  bucket_name,
+  "profile-pictures/user-123/avatar.jpg",
+  ExtraArgs={"StorageClass": "ONEZONE_IA"},
 )
 
 # Retrieve profile picture
 s3_client.download_file(
-    bucket_name,
-    'profile-pictures/user-123/avatar.jpg',
-    'downloaded-avatar.jpg'
+  bucket_name,
+  "profile-pictures/user-123/avatar.jpg",
+  "downloaded-avatar.jpg",
 )
 ```
 

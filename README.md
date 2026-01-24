@@ -1,30 +1,45 @@
-# Project Overview
-You have been hired by The CloudArchs, a cloud consulting company that serves a variety of customers across different industries. Your role is as an AWS Cloud Architect, providing expert advice and hands-on implementation of cost-optimized architectures to meet each client’s unique business and technical requirements.
+# AWS Cost-Optimized Architectures — Learning Activity Portfolio
 
-In this project, you will step into this role to design and implement cost-effective AWS solutions for a series of real-world customer scenarios.
+<!-- markdownlint-disable MD022 MD024 MD032 MD034 MD036 MD060 -->
 
-Each task presents a different business context, technical requirements, and cost challenges. Your goal is to carefully analyze the requirements, design the most cost-effective AWS solution, and clearly document your approach.
+This document is written as a learning activity and assessment artifact. Each task is a mini-case study: I restate the business problem, describe the AWS design decision(s), and document the console implementation evidence.
 
-Completing these tasks may involve:
+## How to Use This Portfolio
 
-- Implementing solutions directly in the AWS Management Console
-- Applying AWS best practices for cost optimization
-- Taking screenshots of your configurations
-- Providing explanations and justifications for your design decisions
+For each task, you can evaluate:
 
-These scenarios cover a range of AWS services and use cases — from S3 storage lifecycle management and cost-efficient web hosting to budget alerts, EC2 right-sizing, network architecture optimization, and DynamoDB capacity planning.
+- Requirements coverage: does the solution meet the stated SLAs and constraints?
+- Cost reasoning: are the largest cost drivers identified and addressed?
+- AWS best practices: security, reliability, and operability trade-offs are called out.
+- Evidence quality: screenshots are explicitly enumerated and tied to requirements.
 
-Approach each scenario as if you were working with a real client:
+## Learning Outcomes (Across Tasks)
 
-- Understand the business requirements
-- Assess the technical constraints
-- Recommend and implement the most cost-effective solution
-- Ensure your documentation is clear, professional, and complete
-- By the end of this project, you will have gained practical experience in identifying, designing, and implementing AWS cost optimization strategies across multiple services and architectural patterns.
+By completing this portfolio, I demonstrate the ability to:
 
-# Task 1
-## Scenario
-Scenario: The company needs to store unstructured data in a centralized location with a consistent destination URL to simplify API calls for the development team. This storage will also serve as the backup destination. The backup team has identified the following access patterns and restoration requirements:
+- Design S3 storage class and lifecycle policies based on access/restoration requirements
+- Replace always-on compute with managed/serverless alternatives where appropriate
+- Implement budget guardrails and tag-based cost allocation
+- Right-size EC2 and EBS based on observed utilization
+- Compare NAT Gateway vs NAT Instance costs and operational trade-offs
+
+## Evidence Standard (Applies to All Tasks)
+
+For each task, I include (or list placeholders for):
+
+- Screenshots of key console settings (with region visible)
+- A short justification tied directly to requirements and cost optimization
+- A brief risk/trade-off note (what I gain vs what I give up)
+
+---
+
+## Task 1 — S3 Lifecycle Design for Backups and Profile Pictures
+
+### Scenario
+
+The company needs to store unstructured data in a centralized location with a consistent destination URL to simplify API calls for the development team. This storage will also serve as the backup destination.
+
+The backup team has identified the following access patterns and restoration requirements:
 
 **0–30 days**: Data is accessed frequently, requiring restoration within seconds.
 
@@ -38,17 +53,9 @@ Scenario: The company needs to store unstructured data in a centralized location
 
 Additionally, this storage location will host user profile pictures uploaded by the application. These images are non-critical, as users can re-upload them if lost. However, they are accessed frequently, as each user profile load on the web application triggers an image retrieval.
 
-Create one or more S3 bucket(s) and configure. Make sure your solution meets the requirements above. Once complete take screenshots of the configuration including short explanations on your solution.
+Create one or more S3 bucket(s) and configure them to meet the access/retrieval SLAs and cost goals.
 
-## Instructions
-- Include screenshots of the S3 bucket's configuration, including (objects, prefixes, bucket properties and management setting)
-- Document how your configuration solves the business requirements
-
-## Rubric: Create the appropriate resources in the AWS console
-### Requirements:
-- Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
-
-## Submission
+### Student Submission
 
 ### Solution Overview
 
@@ -78,6 +85,8 @@ The backup lifecycle policy transitions objects through increasingly cost-effect
 
 **Note:** No lifecycle transitions or expiration rules are configured for profile pictures since they need to remain available as long as the user account is active.
 
+**Implementation detail:** S3 does not support “default storage class by prefix.” To place profile pictures into One Zone-IA immediately (instead of waiting 30+ days for lifecycle transitions), the uploader must set the object storage class at upload time (e.g., `x-amz-storage-class: ONEZONE_IA`, AWS CLI `--storage-class ONEZONE_IA`, or SDK `StorageClass="ONEZONE_IA"`).
+
 ### Additional Bucket Configuration
 
 - **Versioning:** Disabled (backups are typically point-in-time snapshots; profile pictures are user-replaceable)
@@ -94,30 +103,51 @@ This solution optimizes costs by:
 
 ### Screenshots
 
-*(Screenshots of S3 bucket configuration to be added)*
+**Evidence checklist (recommended):**
 
-# Task 2
-## Scenario
+1. Bucket properties (Block Public Access, encryption)
+2. Lifecycle rules list + the specific rule details for `backups/`
+3. Lifecycle rule details for `profile-pictures/`
+4. Bucket “Objects” view showing prefixes
+
+**Bucket Properties: Block Public Access**
+![alt text](images/S3BucketBlockPublicAccess.png)
+
+**Bucket Properties: Encryption**
+![alt text](images/S3BucketEncryption.png)
+
+**Lifecycle Rule List**
+![alt text](images/S3BucketLifecycleRulesList.png)
+
+**backups/ Rule Details**
+![alt text](images/S3BucketBackupsRuleDetails.png)
+
+**profile-pictures/ Rule Details**
+![alt text](images/S3BucketProfilePictureRuleDetails.png)
+
+**Bucket Objects**
+![alt text](images/S3BucketObjects.png)
+
+---
+
+## Task 2 — Cost-Optimized Hosting for a Company Website
+
+### Scenario
 Nexlify Solutions has been hosting its company website on Amazon EC2 instances for some time. Recently, the CIO has reviewed the AWS billing reports and raised concerns about the high monthly costs associated with running the website. This concern was amplified after discussions with peers at other companies who mentioned they operate their websites for just a few dollars per month.
 
 Additionally, usage metrics from the marketing team indicate that website traffic primarily occurs during business hours, with minimal activity outside those times.
 
 As the AWS Solutions Architect, your task is to evaluate the current infrastructure, identify opportunities for cost savings, and implement a more cost-efficient solution for hosting the website. The solution should align with the traffic patterns and business requirements. Once the solution is in place, decommission any unnecessary legacy infrastructure that is not required for hosting this website.
 
-Be sure to document all changes you make, including architecture decisions, screenshots of configurations, and a summary of expected cost savings.
+Be sure to document findings, the target architecture, and decommission steps.
 
-## Instructions
-Include screenshots and documentation of:
+### Learning Objectives
 
-- Your findings of the current environment
-- Screenshots of your configuration
-- Explanation of your solution
+- Identify when EC2 is an anti-pattern for static content delivery
+- Design a low-ops web hosting approach using managed services
+- Explain cost drivers (always-on compute vs pay-per-request)
 
-## Rubric: Create the appropriate resources in the AWS console
-### Requirements:
-- Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
-
-## Submission
+### Student Submission
 
 ### Current Environment Findings
 
@@ -189,10 +219,27 @@ Since peers mentioned hosting websites for "a few dollars per month," this stron
 
 ### Screenshots
 
-*(Screenshots of S3 bucket configuration, CloudFront distribution, and decommissioned EC2 resources to be added)*
+**Evidence checklist (recommended):**
 
-# Task 3
-## Scenario
+1. Current environment: EC2 instances list (names, instance types, running state)
+2. S3 bucket website hosting/origin configuration (as applicable)
+3. CloudFront distribution settings (origin, behaviors, OAC/OAI if used)
+4. DNS records (Route 53) pointing to CloudFront (if in scope)
+5. Termination confirmation or after-state showing legacy EC2 removed
+
+*(Screenshots to be added)*
+
+### Reflection Prompts (for Learning)
+
+1. What changes if the website becomes dynamic (e.g., needs server-side rendering)?
+2. What’s the security impact of public S3 website hosting vs private bucket + CloudFront?
+3. What are the top 2 cost drivers for CloudFront at higher scale?
+
+---
+
+## Task 3 — Budget Guardrails and Tag-Based Cost Allocation
+
+### Scenario
 You are a Cloud Solutions Architect for a digital marketing startup, “AdSpark”, which has just moved most of its infrastructure to AWS.
 
 The CFO is concerned about runaway AWS costs, especially since engineers are testing new services without any spending limits. She has asked you to implement cost controls to prevent monthly surprises.
@@ -210,20 +257,13 @@ Business Requirements:
   - Environment (Production vs. Development)?
   - Team ownership (Marketing, Analytics, Engineering)?
 
-## Instructions
-- Screenshots of configuration made in the AWS console.
-- Document - How will you meet the requirements to ensure that other administrators can easily identify which resources belong to:
-  - A specific environment (e.g., Production or Development)?
-  - A specific team (e.g., Marketing, Analytics, Engineering)?
-- Document - How can the above method be used to effectively break down costs by:
-  - Environment (Production vs. Development)?
-  - Team ownership (Marketing, Analytics, Engineering)?
+### Learning Objectives
 
-## Rubric: Create the appropriate configurations in the AWS console
-### Requirements
-- Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
+- Create an AWS Budget and configure forecasted + actual alerts
+- Define a tagging schema that supports both operations and cost allocation
+- Explain governance options (tag policies, AWS Config rules, IAM, SCPs)
 
-## Submission
+### Student Submission
 
 ### Solution Overview
 
@@ -278,7 +318,8 @@ To ensure administrators can easily identify resource ownership, I recommend imp
 #### Example Resource Tags
 
 **Production Analytics Server:**
-```
+
+```text
 Environment: Production
 Team: Analytics
 Project: DataPipeline
@@ -286,7 +327,8 @@ CostCenter: CC-1002
 ```
 
 **Development Marketing Application:**
-```
+
+```text
 Environment: Development
 Team: Marketing
 Project: AdCampaign
@@ -354,10 +396,26 @@ This solution provides:
 
 ### Screenshots
 
-*(Screenshots of AWS Budget configuration, alert settings, and Cost Allocation Tags to be added)*
+**Evidence checklist (recommended):**
 
-# Task 4
-## Scenario
+1. Budget definition page (name, amount, period)
+2. Budget alerts page (50% and 80% thresholds, actual + forecasted)
+3. Cost Allocation Tags page showing `Environment` and `Team` activated
+4. A sample resource showing the required tags applied
+
+*(Screenshots to be added)*
+
+### Reflection Prompts (for Learning)
+
+1. Why configure forecasted alerts in addition to actual alerts?
+2. What’s the difference between “tagging for operations” and “tagging for cost allocation”?
+3. What enforcement method would you choose for a small startup vs a regulated enterprise?
+
+---
+
+## Task 4 — EC2 and EBS Right-Sizing Based on Utilization
+
+### Scenario
 You are working for a software development company that has multiple EC2 instances, one instance - qa-instance-1 cost every month seems to be costing the company quite a lot compared to the other instances. The monitoring team has looked at the performance of the instance using a 3rd party monitoring tool and found the following:
 
 - CPU utilization:
@@ -376,18 +434,13 @@ Observe the configuration of qa-instance-1 and see if there are any recommendati
 
 Document your observations, and implement & document the steps by step changes for your solution.
 
-## Instructions
-Screenshots & Documentation of
+### Learning Objectives
 
-- The currents findings, what needs to be changed.
-- Changes made
-- Explain how it meets business requirements.
+- Use utilization signals to recommend instance-family and size changes
+- Identify unnecessary EBS performance spend (e.g., provisioned IOPS vs gp3)
+- Document a safe change procedure (backup → stop → change → validate)
 
-## Rubric: Create the appropriate changes to resources in the AWS console
-### Requirements
-- Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
-
-## Submission
+### Student Submission
 
 ### Current Findings
 
@@ -524,10 +577,27 @@ Since this is a QA instance (non-production):
 
 ### Screenshots
 
-*(Screenshots of current instance configuration, instance type change, EBS modification, and cost comparison to be added)*
+**Evidence checklist (recommended):**
 
-# Task 5
-## Scenario
+1. Current instance details (instance type, purchase option, IAM role, attached volumes)
+2. CloudWatch metrics view (CPU, memory if agent, EBS metrics) or 3rd party export
+3. Volume details before/after (type, size, IOPS, throughput)
+4. Change instance type workflow (show stopped state + new type)
+5. Post-change validation evidence (instance running + basic app check)
+
+*(Screenshots to be added)*
+
+### Reflection Prompts (for Learning)
+
+1. When is a burstable instance family (T3/T4g) a good fit, and when is it risky?
+2. What’s your rollback plan if the smaller instance underperforms?
+3. What “hidden costs” exist for right-sizing (downtime, engineering time, risk)?
+
+---
+
+## Task 5 — NAT Gateway vs NAT Instance: Cost and Trade-Off Analysis
+
+### Scenario
 You’re working for a SaaS startup, DevMetrics, which has backend microservices hosted in private subnets in two Availability Zones (AZs). These services require outbound internet access to fetch security updates and connect to external APIs.
 
 Currently, the architecture uses a NAT Gateway in each AZ, but the monthly bill is rising due to the amount of data transferred (~1000GB/month).
@@ -539,15 +609,13 @@ Business Requirements:
 - Compare monthly cost of NAT Gateway vs NAT Instance for 1000GB/month
 - Create a table that compares the NAT Gateway to the NAT Instance for HA, Performance, Scalability, and Maintenance
 
-## Instructions
-- Explain which sources were used to calculate your cost estimate, submit a copy of this.
-- Create a table that compares the NAT Gateway to the NAT Instance for HA, Performance, Scalability, and Maintenance
+### Learning Objectives
 
-## Rubric: Submit documentation of cost estimates and comparison
-### Requirements
-- Include screen shots or PDF of calculations, and table of comparison for NAT Gateway vs NAT Instance.
+- Identify NAT Gateway cost components and how they scale
+- Build an apples-to-apples cost estimate with explicit assumptions
+- Compare managed vs self-managed NAT in HA/ops/performance dimensions
 
-## Submission
+### Student Submission
 
 ### Cost Comparison: NAT Gateway vs NAT Instance
 
@@ -572,7 +640,7 @@ Business Requirements:
 | Data processing charge | $0.045/GB × 1,000 GB | $45.00 |
 | **Total NAT Gateway** | | **$110.70/month** |
 
-*Note: Data transfer out to the internet is charged separately and applies equally to both solutions.*
+*Note: Data transfer out to the internet is charged separately and applies equally to both solutions. NAT Gateway “data processing” is an additional per-GB charge on top of internet egress.*
 
 ---
 
@@ -643,5 +711,18 @@ If operational simplicity and reliability are priorities, NAT Gateway remains th
 
 ### Screenshots/Documentation
 
-*(AWS Pricing Calculator screenshots and PDF export to be added)*
+**Evidence checklist (recommended):**
+
+1. AWS Pricing Calculator (or equivalent) inputs and output summary
+2. NAT Gateway pricing page reference (region-specific)
+3. EC2 instance pricing reference (region-specific)
+4. A short note confirming whether costs assume 1 NAT per AZ
+
+*(Screenshots/PDF to be added)*
+
+### Reflection Prompts (for Learning)
+
+1. What is the operational risk of NAT Instances, and how would you mitigate it (ASG, failover routes)?
+2. At what traffic level would NAT Gateway become “worth it” compared to engineering time?
+3. Which VPC endpoints could reduce NAT usage entirely for AWS service traffic?
 

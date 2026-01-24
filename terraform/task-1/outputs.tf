@@ -56,7 +56,7 @@ output "lifecycle_policy_summary" {
       "after_1_year" = "Deleted"
     }
     profile_pictures = {
-      storage_class = "S3 One Zone-IA"
+      storage_class = "S3 One Zone-IA (set at upload time)"
       expiration    = "None"
     }
   }
