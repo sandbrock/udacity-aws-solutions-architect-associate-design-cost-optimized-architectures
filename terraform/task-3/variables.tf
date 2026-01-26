@@ -5,6 +5,13 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+# AWS Profile
+variable "aws_profile" {
+  description = "AWS CLI profile to use for authentication"
+  type        = string
+  default     = null
+}
+
 # Budget Configuration
 variable "budget_name" {
   description = "Name of the AWS Budget"

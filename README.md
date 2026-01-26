@@ -103,30 +103,23 @@ This solution optimizes costs by:
 
 ### Screenshots
 
-**Evidence checklist (recommended):**
-
-1. Bucket properties (Block Public Access, encryption)
-2. Lifecycle rules list + the specific rule details for `backups/`
-3. Lifecycle rule details for `profile-pictures/`
-4. Bucket “Objects” view showing prefixes
-
 **Bucket Properties: Block Public Access**
-![alt text](images/S3BucketBlockPublicAccess.png)
+![S3 Bucket Blocked Public Access](images/task-1/S3BucketBlockPublicAccess.png)
 
 **Bucket Properties: Encryption**
-![alt text](images/S3BucketEncryption.png)
+![S3 Bucket Enabled Server-Side Encryption](images/task-1/S3BucketEncryption.png)
 
 **Lifecycle Rule List**
-![alt text](images/S3BucketLifecycleRulesList.png)
+![S3 Bucket Lifecycle Rule List](images/task-1/S3BucketLifecycleRulesList.png)
 
-**backups/ Rule Details**
-![alt text](images/S3BucketBackupsRuleDetails.png)
+**`backups/` Rule Details**
+![`backups/` Rule Details](images/task-1/S3BucketBackupsRuleDetails.png)
 
-**profile-pictures/ Rule Details**
-![alt text](images/S3BucketProfilePictureRuleDetails.png)
+**`profile-pictures/` Rule Details**
+![`profile-pictures/` Rule Details](images/task-1/S3BucketProfilePictureRuleDetails.png)
 
 **Bucket Objects**
-![alt text](images/S3BucketObjects.png)
+![S3 Bucket Objects](images/task-1/S3BucketObjects.png)
 
 ---
 
@@ -219,21 +212,14 @@ Since peers mentioned hosting websites for "a few dollars per month," this stron
 
 ### Screenshots
 
-**Evidence checklist (recommended):**
+**S3 Bucket Static Hosting Enabled**
+![S3 Bucket Hosting Enabled](images/task-2/S3BucketStaticHostingEnabled.png)
 
-1. Current environment: EC2 instances list (names, instance types, running state)
-2. S3 bucket website hosting/origin configuration (as applicable)
-3. CloudFront distribution settings (origin, behaviors, OAC/OAI if used)
-4. DNS records (Route 53) pointing to CloudFront (if in scope)
-5. Termination confirmation or after-state showing legacy EC2 removed
+**S3 Bucket Block Public Access**
+![S3 Bucket Public Access Blocked](images/task-2/S3BucketBlockPublicAccess.png)
 
-*(Screenshots to be added)*
-
-### Reflection Prompts (for Learning)
-
-1. What changes if the website becomes dynamic (e.g., needs server-side rendering)?
-2. What’s the security impact of public S3 website hosting vs private bucket + CloudFront?
-3. What are the top 2 cost drivers for CloudFront at higher scale?
+**CloudFront Distribution Settings**
+![CloudFront Origin Policy](images/task-2/CloudFrontOrigin.png)
 
 ---
 
@@ -256,12 +242,6 @@ Business Requirements:
 - Document - How can the above method be used to effectively break down costs by:
   - Environment (Production vs. Development)?
   - Team ownership (Marketing, Analytics, Engineering)?
-
-### Learning Objectives
-
-- Create an AWS Budget and configure forecasted + actual alerts
-- Define a tagging schema that supports both operations and cost allocation
-- Explain governance options (tag policies, AWS Config rules, IAM, SCPs)
 
 ### Student Submission
 
@@ -403,13 +383,13 @@ This solution provides:
 3. Cost Allocation Tags page showing `Environment` and `Team` activated
 4. A sample resource showing the required tags applied
 
-*(Screenshots to be added)*
+**Budget General Settings**
+![Budget General Settings](images/task-3/BudgetGeneralSettings.png)
 
-### Reflection Prompts (for Learning)
+**Budget Alerts**
+![Budget Alerts](images/task-3/BudgetAlerts.png)
 
-1. Why configure forecasted alerts in addition to actual alerts?
-2. What’s the difference between “tagging for operations” and “tagging for cost allocation”?
-3. What enforcement method would you choose for a small startup vs a regulated enterprise?
+
 
 ---
 

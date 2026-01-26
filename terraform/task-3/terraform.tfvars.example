@@ -4,6 +4,9 @@
 # AWS Region for resources
 aws_region = "us-east-1"
 
+# AWS Profile (use the same profile as s3 subdirectory)
+# aws_profile = "angry-mgmt-admin"
+
 # Budget Configuration
 budget_name  = "AdSpark-Monthly-Budget"
 budget_limit = 1000  # Monthly budget in USD

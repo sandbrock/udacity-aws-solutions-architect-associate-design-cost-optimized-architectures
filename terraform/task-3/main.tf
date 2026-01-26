@@ -10,7 +10,29 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = var.aws_profile
+}
+
+# Cost Allocation Tags
+resource "aws_ce_cost_allocation_tag" "environment" {
+  tag_key = "Environment"
+  status  = "Active"
+}
+
+resource "aws_ce_cost_allocation_tag" "team" {
+  tag_key = "Team"
+  status  = "Active"
+}
+
+resource "aws_ce_cost_allocation_tag" "project" {
+  tag_key = "Project"
+  status  = "Active"
+}
+
+resource "aws_ce_cost_allocation_tag" "managed_by" {
+  tag_key = "ManagedBy"
+  status  = "Active"
 }
 
 # SNS Topic for 50% Budget Alert
@@ -22,7 +44,7 @@ resource "aws_sns_topic" "budget_alert_50pct" {
     var.tags,
     {
       Name      = "${var.budget_name}-alert-50pct"
-      Threshold = "50%"
+      Threshold = "50"
     }
   )
 }
@@ -36,7 +58,7 @@ resource "aws_sns_topic" "budget_alert_80pct" {
     var.tags,
     {
       Name      = "${var.budget_name}-alert-80pct"
-      Threshold = "80%"
+      Threshold = "80"
     }
   )
 }
