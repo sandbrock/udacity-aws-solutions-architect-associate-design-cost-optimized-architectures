@@ -55,6 +55,10 @@ Additionally, this storage location will host user profile pictures uploaded by 
 
 Create one or more S3 bucket(s) and configure them to meet the access/retrieval SLAs and cost goals.
 
+### Rubric
+- Create the appropriate resources in the AWS console
+  - Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
+
 ### Student Submission
 
 ### Solution Overview
@@ -134,11 +138,9 @@ As the AWS Solutions Architect, your task is to evaluate the current infrastruct
 
 Be sure to document findings, the target architecture, and decommission steps.
 
-### Learning Objectives
-
-- Identify when EC2 is an anti-pattern for static content delivery
-- Design a low-ops web hosting approach using managed services
-- Explain cost drivers (always-on compute vs pay-per-request)
+### Rubric
+- Create the appropriate resources in the AWS console
+  - Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
 
 ### Student Submission
 
@@ -242,6 +244,10 @@ Business Requirements:
 - Document - How can the above method be used to effectively break down costs by:
   - Environment (Production vs. Development)?
   - Team ownership (Marketing, Analytics, Engineering)?
+  
+### Rubric
+- Create the appropriate configurations in the AWS console
+  - Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
 
 ### Student Submission
 
@@ -286,7 +292,7 @@ I created an AWS Budget with the following configuration:
 
 #### Tagging Schema
 
-To ensure administrators can easily identify resource ownership, I recommend implementing the following **mandatory tags** on all AWS resources:
+To ensure administrators can easily identify resource ownership, I recommend implementing the following mandatory tags on all AWS resources:
 
 | Tag Key | Purpose | Example Values |
 |---------|---------|----------------|
@@ -321,8 +327,6 @@ To ensure compliance with the tagging policy:
 
 1. **AWS Organizations Tag Policies** — Create and attach tag policies to enforce allowed values
 2. **AWS Config Rules** — Use `required-tags` managed rule to detect non-compliant resources
-3. **IAM Policies** — Require tags on resource creation using `aws:RequestTag` condition keys
-4. **Service Control Policies (SCPs)** — Prevent resource creation without required tags
 
 ---
 
@@ -365,23 +369,7 @@ Once Cost Allocation Tags are activated, use **AWS Cost Explorer** to analyze co
 
 ---
 
-### Summary
-
-This solution provides:
-
-1. **Proactive cost alerts** — Budget notifications at 50% and 80% thresholds prevent billing surprises
-2. **Resource visibility** — Consistent tagging allows administrators to quickly identify resource ownership
-3. **Cost accountability** — Cost allocation tags enable granular cost reporting by environment and team
-4. **Governance framework** — Tag policies and enforcement mechanisms ensure ongoing compliance
-
 ### Screenshots
-
-**Evidence checklist (recommended):**
-
-1. Budget definition page (name, amount, period)
-2. Budget alerts page (50% and 80% thresholds, actual + forecasted)
-3. Cost Allocation Tags page showing `Environment` and `Team` activated
-4. A sample resource showing the required tags applied
 
 **Budget General Settings**
 ![Budget General Settings](images/task-3/BudgetGeneralSettings.png)
@@ -389,7 +377,17 @@ This solution provides:
 **Budget Alerts**
 ![Budget Alerts](images/task-3/BudgetAlerts.png)
 
+**Organization Tag Policy**
+![Organization Tag Policy](images/task-3/OrganizationTagPolicy.png)
 
+**Config Tags Required**
+![Config Tags Required](images/task-3/ConfigRequiredTags.png)
+
+**Cost Allocation Tags**
+![Cost Allocation Tags](images/task-3/CostAllocationTags.png)
+
+**`Team` and `Environment` Tags Applied**
+![Team and Environment Tags Applied](images/task-3/TagAppliedToS3Bucket.png)
 
 ---
 
@@ -414,11 +412,10 @@ Observe the configuration of qa-instance-1 and see if there are any recommendati
 
 Document your observations, and implement & document the steps by step changes for your solution.
 
-### Learning Objectives
+### Rubric
 
-- Use utilization signals to recommend instance-family and size changes
-- Identify unnecessary EBS performance spend (e.g., provisioned IOPS vs gp3)
-- Document a safe change procedure (backup → stop → change → validate)
+- Create the appropriate changes to resources in the AWS console
+  - Include screenshots of the service(s) created and the configuration of those services. Include a justification paragraph for the services created.
 
 ### Student Submission
 
@@ -464,7 +461,7 @@ If the current instance is oversized (e.g., `m5.xlarge` or larger), consider:
 
 | Current Type | Recommended Type | Monthly Savings (On-Demand) |
 |--------------|------------------|----------------------------|
-| m5.xlarge (4 vCPU, 16GB) | t3.medium (2 vCPU, 4GB) | ~$100/month |
+| m5.xlarge (4 vCPU, 16GB) | t3.medium (2 vCPU, 4GB) | ~$110/month |
 | m5.large (2 vCPU, 8GB) | t3.small (2 vCPU, 2GB) | ~$50/month |
 
 *Note: Exact recommendation depends on actual current instance type.*
@@ -515,7 +512,7 @@ Since this is a QA instance (non-production):
 #### Step 3: Change Instance Type
 1. Select the stopped instance
 2. Actions → Instance settings → Change instance type
-3. Select the recommended smaller instance type (e.g., `t3.medium`)
+3. Select the recommended smaller instance type
 4. Click Apply
 
 #### Step 4: Modify EBS Volume (if applicable)
@@ -557,21 +554,26 @@ Since this is a QA instance (non-production):
 
 ### Screenshots
 
-**Evidence checklist (recommended):**
+**Instance Details Before Changes**
+![Current Instance Details](images/task-4/InstanceTypeCurrentSettings.png)
 
-1. Current instance details (instance type, purchase option, IAM role, attached volumes)
-2. CloudWatch metrics view (CPU, memory if agent, EBS metrics) or 3rd party export
-3. Volume details before/after (type, size, IOPS, throughput)
-4. Change instance type workflow (show stopped state + new type)
-5. Post-change validation evidence (instance running + basic app check)
+**`qa-instance-1` Utiliziation Before Changes**
+![`qa-instance-1` Utilization](images/task-4/QAInstance1Metrics.png)
 
-*(Screenshots to be added)*
+**Instance Volumes Before Changes**
+![Instance Volumes](images/task-4/S3Volumes.png)
 
-### Reflection Prompts (for Learning)
+**Second Volume Settings Before Changes**
+![Second Volume Settings](images/task-4/SecondVolumeSettings.png)
 
-1. When is a burstable instance family (T3/T4g) a good fit, and when is it risky?
-2. What’s your rollback plan if the smaller instance underperforms?
-3. What “hidden costs” exist for right-sizing (downtime, engineering time, risk)?
+**Took Image Snapshot Before Changes**
+![Took Image Snapshot Before Changes](images/task-4/ImageSnapshotBeforeChanges.png)
+
+**New Instance Type: t2.small**
+![New Instance Type: t2.small](images/task-4/NewInstanceType.png)
+
+**New Storage IOPS: 3000**
+![New Storage IOPS: 3000](images/task-4/NewStorageIOPS.png)
 
 ---
 
@@ -589,11 +591,10 @@ Business Requirements:
 - Compare monthly cost of NAT Gateway vs NAT Instance for 1000GB/month
 - Create a table that compares the NAT Gateway to the NAT Instance for HA, Performance, Scalability, and Maintenance
 
-### Learning Objectives
+### Rubric
 
-- Identify NAT Gateway cost components and how they scale
-- Build an apples-to-apples cost estimate with explicit assumptions
-- Compare managed vs self-managed NAT in HA/ops/performance dimensions
+- Submit documentation of cost estimates and comparison
+  - Include screen shots or PDF of calculations, and table of comparison for NAT Gateway vs NAT Instance.
 
 ### Student Submission
 
@@ -603,7 +604,7 @@ Business Requirements:
 - **Region:** US East (N. Virginia) — us-east-1
 - **Data Transfer:** 1,000 GB/month outbound
 - **Architecture:** 2 Availability Zones (requiring 2 NAT solutions for HA)
-- **NAT Instance Type:** t3.nano (suitable for NAT workloads up to ~5 Gbps)
+- **NAT Instance Type:** t3.nano (baseline ~32 Mbps, burst up to 5 Gbps when CPU credits available)
 
 #### Sources Used for Cost Estimates
 1. **AWS Pricing Calculator** — https://calculator.aws/
@@ -659,7 +660,7 @@ Business Requirements:
 | Feature | NAT Gateway | NAT Instance |
 |---------|-------------|--------------|
 | **High Availability** | Highly available within a single AZ. Deploy one per AZ for multi-AZ HA. Automatic failover within AZ. | No built-in HA. Requires manual setup: scripts, Auto Scaling groups, or multiple instances with health checks. Single point of failure without custom HA solution. |
-| **Performance** | Up to 100 Gbps bandwidth. Scales automatically based on demand. No bottleneck concerns. | Limited by EC2 instance type bandwidth. t3.nano: ~5 Gbps. Requires larger instance for higher throughput. Can become a bottleneck under heavy load. |
+| **Performance** | Up to 100 Gbps bandwidth. Scales automatically based on demand. No bottleneck concerns. | Limited by EC2 instance type bandwidth. t3.nano: baseline ~32 Mbps, burst up to 5 Gbps (credit-dependent). Requires larger instance for higher sustained throughput. Can become a bottleneck under heavy load. |
 | **Scalability** | Fully managed auto-scaling. No intervention required. Handles traffic spikes seamlessly. | Manual scaling required. Must monitor and resize instances. May require instance type change or additional NAT instances for increased demand. |
 | **Maintenance** | Zero maintenance. Fully managed by AWS. No patching, no OS updates, no security hardening. | Full maintenance responsibility: OS patching, security updates, NAT software configuration, monitoring, troubleshooting. Requires operational overhead. |
 | **Security Groups** | Cannot be associated with Security Groups. Use NACLs for traffic control. | Can use Security Groups for fine-grained traffic control. More flexible security options. |
@@ -680,7 +681,7 @@ Business Requirements:
 
 **For DevMetrics' use case:**
 
-Given the **1,000 GB/month** data transfer and the concern about **rising monthly bills**, I recommend evaluating NAT Instances if:
+Given the 1,000 GB/month data transfer and the concern about rising monthly bills, I recommend evaluating NAT Instances if:
 - The team has operational capacity to manage EC2 instances
 - The workload can tolerate brief outages during instance failures
 - Cost savings of ~$1,200/year justifies the additional operational overhead
@@ -689,20 +690,13 @@ If operational simplicity and reliability are priorities, NAT Gateway remains th
 
 ---
 
-### Screenshots/Documentation
+### Screenshots
 
-**Evidence checklist (recommended):**
+**NAT Gateway Estimate**
+![NAT Gateway Estimate](images/task-5/NATGatewayEstimate.png)
 
-1. AWS Pricing Calculator (or equivalent) inputs and output summary
-2. NAT Gateway pricing page reference (region-specific)
-3. EC2 instance pricing reference (region-specific)
-4. A short note confirming whether costs assume 1 NAT per AZ
+**On-Demand NAT Instance Estimate**
+![On-Demand NAT Instance Estimate](images/task-5/OnDemandEC2.png)
 
-*(Screenshots/PDF to be added)*
-
-### Reflection Prompts (for Learning)
-
-1. What is the operational risk of NAT Instances, and how would you mitigate it (ASG, failover routes)?
-2. At what traffic level would NAT Gateway become “worth it” compared to engineering time?
-3. Which VPC endpoints could reduce NAT usage entirely for AWS service traffic?
-
+**Reserved NAT Instance Estimate**
+![Reserved NAT Instance Estimate](images/task-5/ReservedEC2.png)
